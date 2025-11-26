@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2a7de1;
+            --primary-dark: #1a5bb5;
+            --secondary: #4caf50;
+            --light: #f5f9ff;
+            --dark: #333;
+            --gray: #e0e0e0;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Language Selection Screen */
+        .language-selection {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .language-selection h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .language-options {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .language-btn {
+            background-color: white;
+            border: 2px solid var(--gray);
+            border-radius: 10px;
+            padding: 20px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .language-btn i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        /* Role Selection Screen */
+        .role-selection {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .role-selection h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .role-options {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .role-btn {
+            background-color: white;
+            border: 2px solid var(--gray);
+            border-radius: 15px;
+            padding: 30px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .role-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .role-btn.doctor {
+            border-color: var(--primary);
+        }
+
+        .role-btn.patient {
+            border-color: var(--secondary);
+        }
+
+        .role-btn i {
+            font-size: 3rem;
+        }
+
+        .role-btn.doctor i {
+            color: var(--primary);
+        }
+
+        .role-btn.patient i {
+            color: var(--secondary);
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ai-tool-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .ai-tool-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .ai-tool-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 100;
+            min-width: 200px;
+        }
+
+        .ai-tool-dropdown.active {
+            display: block;
+        }
+
+        .ai-tool-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .ai-tool-item:last-child {
+            border-bottom: none;
+        }
+
+        .ai-tool-item:hover {
+            background-color: var(--light);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 30px 20px;
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray);
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--light);
+            color: var(--primary);
+        }
+
+        /* Content Area */
+        .content-area {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .card-content {
+            line-height: 1.6;
+        }
+
+        /* Patient Records */
+        .patient-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .patient-card {
+            background-color: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .patient-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .patient-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .patient-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light);
+        }
+
+        /* Patient EHR */
+        .ehr-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .payment-code {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: var(--dark);
+        }
+
+        /* Symptoms */
+        .symptom-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .symptom-item:last-child {
+            border-bottom: none;
+        }
+
+        .symptom-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .symptom-severity {
+            display: flex;
+            gap: 5px;
+        }
+
+        .severity-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--gray);
+        }
+
+        .severity-dot.active {
+            background-color: var(--warning);
+        }
+
+        .ai-analysis {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        /* AI Chatbot */
+        .chatbot-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-container {
+            background-color: white;
+            border-radius: 15px;
+            width: 400px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .chatbot-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+
+        .message.bot {
+            background-color: var(--light);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user {
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--gray);
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--gray);
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .chatbot-input button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Translate Tool */
+        .translate-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .translate-container {
+            background-color: white;
+            border-radius: 15px;
+            width: 500px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .translate-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .translate-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .language-selectors {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .language-select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+        }
+
+        .text-areas {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .translate-textarea {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid var(--gray);
+            border-radius: 8px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .translate-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .ehr-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .language-options, .role-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .language-btn, .role-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .patient-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selection Screen -->
+    <div class="language-selection" id="languageSelection">
+        <h1>Welcome to MediCare Portal</h1>
+        <p>Please select your preferred language</p>
+        <div class="language-options">
+            <button class="language-btn" data-lang="en">
+                <i class="fas fa-globe-americas"></i>
+                <span>English</span>
+            </button>
+            <button class="language-btn" data-lang="zh-HK">
+                <i class="fas fa-globe-asia"></i>
+                <span>Cantonese (廣東話)</span>
+            </button>
+            <button class="language-btn" data-lang="zh-CN">
+                <i class="fas fa-globe"></i>
+                <span>Simplified Chinese (简体中文)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Role Selection Screen -->
+    <div class="role-selection" id="roleSelection">
+        <h1>Select Your Role</h1>
+        <p>Please choose how you will use the portal</p>
+        <div class="role-options">
+            <button class="role-btn doctor" data-role="doctor">
+                <i class="fas fa-user-md"></i>
+                <span>Healthcare Provider</span>
+                <small>Access patient records and medical tools</small>
+            </button>
+            <button class="role-btn patient" data-role="patient">
+                <i class="fas fa-user-injured"></i>
+                <span>Patient</span>
+                <small>View your health records and manage appointments</small>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard" id="dashboard">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>MediCare Portal</span>
+            </div>
+            <div class="user-info">
+                <div class="ai-tool-container">
+                    <button class="ai-tool-btn" id="aiToolBtn">
+                        <i class="fas fa-robot"></i>
+                        AI Tools
+                    </button>
+                    <div class="ai-tool-dropdown" id="aiToolDropdown">
+                        <div class="ai-tool-item" id="translateBtn">
+                            <i class="fas fa-language"></i>
+                            <span>Translate</span>
+                        </div>
+                        <div class="ai-tool-item" id="chatbotBtn">
+                            <i class="fas fa-comment-medical"></i>
+                            <span>AI Health Assistant</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle" style="font-size: 2rem; color: var(--primary);"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3 class="sidebar-title" id="sidebarTitle">Navigation</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active" id="navDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#" id="navRecords"><i class="fas fa-file-medical"></i> Medical Records</a></li>
+                    <li><a href="#" id="navAppointments"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                    <li><a href="#" id="navPrescriptions"><i class="fas fa-prescription-bottle"></i> Prescriptions</a></li>
+                    <li><a href="#" id="navBilling"><i class="fas fa-credit-card"></i> Billing & Payments</a></li>
+                    <li><a href="#" id="navSettings"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Left Column -->
+                <div>
+                    <!-- Doctor Dashboard -->
+                    <div class="doctor-content" id="doctorContent">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Patient Records</h2>
+                                <button class="btn btn-primary">Add New Patient</button>
+                            </div>
+                            <div class="card-content">
+                                <div class="patient-list">
+                                    <div class="patient-card">
+                                        <div class="patient-name">John Smith</div>
+                                        <div class="patient-info">
+                                            <div><strong>ID:</strong> P-12345</div>
+                                            <div><strong>Age:</strong> 45</div>
+                                            <div><strong>Last Visit:</strong> 15 Oct 2023</div>
+                                            <div><strong>Condition:</strong> Hypertension</div>
+                                        </div>
+                                        <div class="patient-actions">
+                                            <button class="btn btn-primary">View Records</button>
+                                            <button class="btn btn-outline">Message</button>
+                                        </div>
+                                    </div>
+                                    <div class="patient-card">
+                                        <div class="patient-name">Maria Garcia</div>
+                                        <div class="patient-info">
+                                            <div><strong>ID:</strong> P-12346</div>
+                                            <div><strong>Age:</strong> 32</div>
+                                            <div><strong>Last Visit:</strong> 12 Oct 2023</div>
+                                            <div><strong>Condition:</strong> Diabetes</div>
+                                        </div>
+                                        <div class="patient-actions">
+                                            <button class="btn btn-primary">View Records</button>
+                                            <button class="btn btn-outline">Message</button>
+                                        </div>
+                                    </div>
+                                    <div class="patient-card">
+                                        <div class="patient-name">Robert Johnson</div>
+                                        <div class="patient-info">
+                                            <div><strong>ID:</strong> P-12347</div>
+                                            <div><strong>Age:</strong> 58</div>
+                                            <div><strong>Last Visit:</strong> 10 Oct 2023</div>
+                                            <div><strong>Condition:</strong> Arthritis</div>
+                                        </div>
+                                        <div class="patient-actions">
+                                            <button class="btn btn-primary">View Records</button>
+                                            <button class="btn btn-outline">Message</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Dashboard -->
+                    <div class="patient-content" id="patientContent">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">My Health Summary</h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="ehr-grid">
+                                    <div>
+                                        <h3>Recent Appointments</h3>
+                                        <ul style="margin-top: 15px; padding-left: 20px;">
+                                            <li style="margin-bottom: 10px;">Dr. Wilson - Cardiology - 15 Oct 2023</li>
+                                            <li style="margin-bottom: 10px;">Dr. Lee - General Checkup - 1 Oct 2023</li>
+                                            <li style="margin-bottom: 10px;">Dr. Patel - Dermatology - 20 Sep 2023</li>
+                                        </ul>
+                                    </div>
+                                    <div class="payment-code">
+                                        <h3>Payment QR Code</h3>
+                                        <div class="qr-code">
+                                            <!-- Placeholder for QR code -->
+                                            <div style="text-align: center;">
+                                                <i class="fas fa-qrcode" style="font-size: 3rem; color: #333; margin-bottom: 10px;"></i>
+                                                <div>Scan to Pay</div>
+                                            </div>
+                                        </div>
+                                        <p>Show this code at the reception for payment</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">My Symptoms</h2>
+                                <button class="btn btn-primary">Add Symptom</button>
+                            </div>
+                            <div class="card-content">
+                                <div class="symptom-item">
+                                    <div class="symptom-info">
+                                        <div><strong>Headache</strong></div>
+                                        <div>Started 2 days ago, mild to moderate pain</div>
+                                        <div class="symptom-severity">
+                                            <span>Severity:</span>
+                                            <div class="severity-dot active"></div>
+                                            <div class="severity-dot active"></div>
+                                            <div class="severity-dot"></div>
+                                            <div class="severity-dot"></div>
+                                            <div class="severity-dot"></div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline">AI Analysis</button>
+                                </div>
+                                <div class="symptom-item">
+                                    <div class="symptom-info">
+                                        <div><strong>Fatigue</strong></div>
+                                        <div>Feeling tired throughout the day</div>
+                                        <div class="symptom-severity">
+                                            <span>Severity:</span>
+                                            <div class="severity-dot active"></div>
+                                            <div class="severity-dot active"></div>
+                                            <div class="severity-dot active"></div>
+                                            <div class="severity-dot"></div>
+                                            <div class="severity-dot"></div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline">AI Analysis</button>
+                                </div>
+                                <div class="ai-analysis">
+                                    <h4>AI Health Insights</h4>
+                                    <p>Based on your symptoms, our AI analysis suggests you might be experiencing tension headaches possibly related to stress or sleep patterns. Consider practicing relaxation techniques and maintaining a consistent sleep schedule. If symptoms persist, consult with your healthcare provider.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Upcoming Appointments</h2>
+                        </div>
+                        <div class="card-content">
+                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--gray);">
+                                <div><strong>Dr. Anderson</strong> - Cardiology</div>
+                                <div>25 Oct 2023, 10:30 AM</div>
+                                <button class="btn btn-outline" style="margin-top: 10px;">Reschedule</button>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <div><strong>Dr. Kim</strong> - Dental Checkup</div>
+                                <div>5 Nov 2023, 2:15 PM</div>
+                                <button class="btn btn-outline" style="margin-top: 10px;">Reschedule</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Lab Results</h2>
+                        </div>
+                        <div class="card-content">
+                            <div style="margin-bottom: 15px;">
+                                <div><strong>Blood Test</strong> - 10 Oct 2023</div>
+                                <div style="color: var(--secondary);">All values within normal range</div>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <div><strong>Cholesterol Panel</strong> - 10 Oct 2023</div>
+                                <div style="color: var(--secondary);">Slight elevation in LDL</div>
+                            </div>
+                            <button class="btn btn-outline">View All Results</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chatbot Modal -->
+    <div class="chatbot-modal" id="chatbotModal">
+        <div class="chatbot-container">
+            <div class="chatbot-header">
+                <h3>AI Health Assistant</h3>
+                <button id="closeChatbot" style="background: none; border: none; color: white; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    Hello! I'm your AI Health Assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Type your message...">
+                <button id="sendMessage">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Translate Tool Modal -->
+    <div class="translate-modal" id="translateModal">
+        <div class="translate-container">
+            <div class="translate-header">
+                <h3>AI Translation Tool</h3>
+                <button id="closeTranslate" style="background: none; border: none; color: white; cursor: pointer;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="translate-content">
+                <div class="language-selectors">
+                    <select class="language-select" id="sourceLang">
+                        <option value="en">English</option>
+                        <option value="zh-CN">Chinese (Simplified)</option>
+                        <option value="zh-HK">Cantonese</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                    </select>
+                    <button id="swapLanguages" style="background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                    <select class="language-select" id="targetLang">
+                        <option value="zh-CN">Chinese (Simplified)</option>
+                        <option value="zh-HK">Cantonese</option>
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                    </select>
+                </div>
+                <div class="text-areas">
+                    <textarea class="translate-textarea" id="sourceText" placeholder="Enter text to translate...">Hello, how are you feeling today?</textarea>
+                    <textarea class="translate-textarea" id="targetText" placeholder="Translation will appear here..." readonly>你好，你今天感觉怎么样？</textarea>
+                </div>
+                <div class="translate-actions">
+                    <button class="btn btn-outline">Clear</button>
+                    <button class="btn btn-primary">Translate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const languageSelection = document.getElementById('languageSelection');
+        const roleSelection = document.getElementById('roleSelection');
+        const dashboard = document.getElementById('dashboard');
+        const aiToolBtn = document.getElementById('aiToolBtn');
+        const aiToolDropdown = document.getElementById('aiToolDropdown');
+        const translateBtn = document.getElementById('translateBtn');
+        const chatbotBtn = document.getElementById('chatbotBtn');
+        const chatbotModal = document.getElementById('chatbotModal');
+        const translateModal = document.getElementById('translateModal');
+        const closeChatbot = document.getElementById('closeChatbot');
+        const closeTranslate = document.getElementById('closeTranslate');
+        const doctorContent = document.getElementById('doctorContent');
+        const patientContent = document.getElementById('patientContent');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatbotInput = document.getElementById('chatbotInput');
+        const chatbotMessages = document.getElementById('chatbotMessages');
+
+        // Language Selection
+        document.querySelectorAll('.language-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                // In a real app, we would set the language preference here
+                languageSelection.style.display = 'none';
+                roleSelection.style.display = 'flex';
+            });
+        });
+
+        // Role Selection
+        document.querySelectorAll('.role-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const role = this.getAttribute('data-role');
+                roleSelection.style.display = 'none';
+                dashboard.style.display = 'block';
+                
+                // Show appropriate content based on role
+                if (role === 'doctor') {
+                    doctorContent.style.display = 'block';
+                    patientContent.style.display = 'none';
+                } else {
+                    doctorContent.style.display = 'none';
+                    patientContent.style.display = 'block';
+                }
+            });
+        });
+
+        // AI Tools Dropdown
+        aiToolBtn.addEventListener('click', function() {
+            aiToolDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.ai-tool-container')) {
+                aiToolDropdown.classList.remove('active');
+            }
+        });
+
+        // Open Translate Tool
+        translateBtn.addEventListener('click', function() {
+            translateModal.style.display = 'flex';
+            aiToolDropdown.classList.remove('active');
+        });
+
+        // Open Chatbot
+        chatbotBtn.addEventListener('click', function() {
+            chatbotModal.style.display = 'flex';
+            aiToolDropdown.classList.remove('active');
+        });
+
+        // Close Modals
+        closeChatbot.addEventListener('click', function() {
+            chatbotModal.style.display = 'none';
+        });
+
+        closeTranslate.addEventListener('click', function() {
+            translateModal.style.display = 'none';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === chatbotModal) {
+                chatbotModal.style.display = 'none';
+            }
+            if (event.target === translateModal) {
+                translateModal.style.display = 'none';
+            }
+        });
+
+        // Chatbot functionality
+        sendMessage.addEventListener('click', function() {
+            const message = chatbotInput.value.trim();
+            if (message) {
+                // Add user message
+                addMessage(message, 'user');
+                chatbotInput.value = '';
+                
+                // Simulate AI response after a short delay
+                setTimeout(() => {
+                    const responses = [
+                        "I understand your concern. Based on your symptoms, I recommend consulting with your healthcare provider for a proper diagnosis.",
+                        "That's an interesting question. While I can provide general health information, it's always best to consult with a medical professional for personalized advice.",
+                        "Thank you for sharing that information. I suggest monitoring your symptoms and scheduling an appointment if they persist or worsen.",
+                        "I'm here to help with health-related questions. For emergency situations, please contact emergency services immediately."
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(randomResponse, 'bot');
+                }, 1000);
+            }
+        });
+
+        chatbotInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage.click();
+            }
+        });
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.textContent = text;
+            chatbotMessages.appendChild(messageDiv);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        // Swap languages in translate tool
+        document.getElementById('swapLanguages').addEventListener('click', function() {
+            const sourceLang = document.getElementById('sourceLang');
+            const targetLang = document.getElementById('targetLang');
+            const sourceText = document.getElementById('sourceText');
+            const targetText = document.getElementById('targetText');
+            
+            // Swap values
+            const tempLang = sourceLang.value;
+            sourceLang.value = targetLang.value;
+            targetLang.value = tempLang;
+            
+            const tempText = sourceText.value;
+            sourceText.value = targetText.value;
+            targetText.value = tempText;
+        });
+    </script>
+</body>
+</html>
